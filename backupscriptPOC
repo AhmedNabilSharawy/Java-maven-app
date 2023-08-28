@@ -1,0 +1,51 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: [ self-hosted ]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      # Runs a set of commands using the runners shell
+      #- name: build with maven
+      - name: build with maven
+        run: mvn clean package
+      #- name: build Docker image
+      - name: build docker image
+        run: docker build . --file Dockerfile --tag public.ecr.aws/y1z8r7q4/java-project:latest
+      # run: docker images
+      - name: login ECR
+        run: | 
+         #aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/y1z8r7q4
+         #docker push public.ecr.aws/y1z8r7q4/java-project:latest
+         docker run -d public.ecr.aws/y1z8r7q4/java-project:latest
+         docker ps
+         #wget https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz
+         #tar xzvf openjdk-11_linux-x64_bin.tar.gz
+         #java -version
+         #sudo mv jdk-11 /usr/lib/jvm/openjdk-11-manual-installation/
+          #sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/openjdk-11-manual-installation/bin/java 1
+          #sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/openjdk-11-manual-installation/bin/javac 1
+          #sudo apt-get update -y
+           #sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+          #docker build . --file Dockerfile --tag java-test-project:latest
+          # mvn -B package --file pom.xml
+          # mvn deploy -s mvn-settings.xml
